@@ -64,7 +64,7 @@ impl Features {
                 println!(r#"cargo:rustc-cfg={}_component="{}""#, feature, component);
             }
         }
-        println!("cargo:platform-components={}",
+        println!("cargo:platform_components={}",
             self.platform_components.iter().flat_map(|(feature, components)| {
                 components.iter().map(move |component| format!(r#"{}_component={}"#, feature, component))
             } ).collect::<Vec<_>>().join(",")
