@@ -20,12 +20,17 @@ fn main() {
     }
 
     let mut b = cc::Build::new();
-    println!("Adding to include path: {}", env::var("DEP_MBEDTLS_INCLUDE").unwrap());
-    b.include(env::var_os("DEP_MBEDTLS_INCLUDE").unwrap());
-    let config_file = format!(r#""{}""#, env::var("DEP_MBEDTLS_CONFIG_H").unwrap());
-    println!("Defining MBEDTLS_CONFIG_FILE to be '{}'", config_file.as_str());
+    let mbedtls_include = env::var_os("DEP_MBEDTLS_INCLUDE_BZL")
+        .or(env::var_os("DEP_MBEDTLS_INCLUDE"))
+        .unwrap();
+    println!("Adding to include path: {}", mbedtls_include.to_str().unwrap());
+    b.include(mbedtls_include);
+    let config_file = env::var("DEP_MBEDTLS_CONFIG_H_BZL")
+        .or(env::var("DEP_MBEDTLS_CONFIG_H"))
+        .unwrap();
+    println!("Defining MBEDTLS_CONFIG_FILE to be \"{}\"", config_file);
     b.define("MBEDTLS_CONFIG_FILE",
-             Some(config_file.as_str()));
+             Some(format!(r#""{}""#, config_file).as_str()));
     
     b.file("src/mbedtls_malloc.c");
     b.file("src/rust_printf.c");
